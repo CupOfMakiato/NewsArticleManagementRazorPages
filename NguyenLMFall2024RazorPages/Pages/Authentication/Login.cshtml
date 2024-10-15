@@ -1,0 +1,124 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.Authentication.LoginModel
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            padding-top: 5%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .card {
+            margin: auto;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+            .card h2 {
+                font-weight: 600;
+                color: #343a40;
+                margin-bottom: 20px;
+            }
+
+        .form-control {
+            height: 45px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+
+        .btn-login {
+            width: 100%;
+            height: 45px;
+            margin-top: 10px;
+            font-weight: 600;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-login:hover {
+                background-color: #0056b3;
+            }
+
+        .btn-secondary {
+            width: 100%;
+            height: 45px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h2 class="text-center">Login</h2>
+            <hr />
+            <form method="post">
+                <div class="form-group">
+                    <label asp-for="LoginAccount.AccountEmail" class="control-label">Email</label>
+                    <input asp-for="LoginAccount.AccountEmail" class="form-control" placeholder="Enter your email" />
+                    <span asp-validation-for="LoginAccount.AccountEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LoginAccount.AccountPassword" class="control-label">Password</label>
+                    <input asp-for="LoginAccount.AccountPassword" type="password" class="form-control" placeholder="Enter your password" />
+                    <span asp-validation-for="LoginAccount.AccountPassword" class="text-danger"></span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger text-center" role="alert">@Model.ErrorMessage</div>
+                }
+                <button type="submit" asp-page-handler="Login" class="btn btn-primary btn-login">Login</button>
+                <a href="/News/ViewNews" class="btn btn-secondary btn-login">View News</a>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
+
+@section Scripts {
+    <script>
+        // Optional: Hide error message after 2 seconds
+        document.addEventListener("DOMContentLoaded", function () {
+            const errorMessage = document.querySelector(".alert-danger");
+            if (errorMessage) {
+                setTimeout(function () {
+                    errorMessage.style.display = "none";
+                }, 2000); // 2000 milliseconds = 2 seconds
+            }
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
