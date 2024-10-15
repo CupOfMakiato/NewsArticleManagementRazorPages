@@ -1,0 +1,11 @@
+admin@FUNewsManagementSystem.org
+@@abc123@@
+
+
+TestNameOne@FUNewsManagement.org
+
+TestLecturerAccount@FUNewsManagement.org
+
+ThisIsAStaffAccount
+
+TestStaffAccount@FUNewsManagement.org

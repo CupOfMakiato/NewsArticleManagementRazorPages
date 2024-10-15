@@ -5,13 +5,13 @@ VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NguyenLMFall2024RazorPages", "NguyenLMFall2024RazorPages\NguyenLMFall2024RazorPages.csproj", "{2E6F5C79-EFE1-4F56-BCBD-C2F0CC5AE72B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{4AE3C302-971B-45F5-A711-B32132A93CF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{4AE3C302-971B-45F5-A711-B32132A93CF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{2654934A-EA1A-4DC9-BD9F-248CAB50391D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{2654934A-EA1A-4DC9-BD9F-248CAB50391D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObject", "BusinessObject\BusinessObject.csproj", "{2411F4D2-DDA2-4CA5-BB8C-5D0CFBF293D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessObject", "BusinessObject\BusinessObject.csproj", "{2411F4D2-DDA2-4CA5-BB8C-5D0CFBF293D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAO", "DAO\DAO.csproj", "{F6ECE19E-BF36-4B89-85C7-B7BE04F4BE85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAO", "DAO\DAO.csproj", "{F6ECE19E-BF36-4B89-85C7-B7BE04F4BE85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

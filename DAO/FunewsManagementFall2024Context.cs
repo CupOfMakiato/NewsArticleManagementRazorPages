@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using BusinessObject.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
-namespace BusinessObject.Models;
+namespace DAO;
 
 public partial class FunewsManagementFall2024Context : DbContext
 {
@@ -25,8 +26,20 @@ public partial class FunewsManagementFall2024Context : DbContext
     public virtual DbSet<Tag> Tags { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DAILYCOFFEE\\SQLEXPRESS;Database=FUNewsManagementFall2024;Uid=sa;Pwd=12345;TrustServerCertificate=True");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer(GetConnectionString());
+        }
+    }
+
+    private string GetConnectionString()
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true).Build();
+        return configuration["ConnectionStrings:DefaultConnection"];
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
