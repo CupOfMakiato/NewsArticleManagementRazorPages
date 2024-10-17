@@ -1,0 +1,76 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.CategoryManagement.DeleteModel
+@{
+    Layout = "_Layout";
+
+}
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+
+<div>
+    <h1>Are you sure you want to delete this?</h1>
+    <dl class="row">
+        <dt class="col-4">
+            @Html.DisplayNameFor(model => model.Category.CategoryName)
+        </dt>
+        <dd class="col-8">
+            @Html.DisplayFor(model => model.Category.CategoryName)
+        </dd>
+        <dt class="col-4">
+            @Html.DisplayNameFor(model => model.Category.CategoryDesciption)
+        </dt>
+        <dd class="col-8">
+            @Html.DisplayFor(model => model.Category.CategoryDesciption)
+        </dd>
+        <dt class="col-4">
+            @Html.DisplayNameFor(model => model.Category.ParentCategoryId)
+        </dt>
+        <dd class="col-8">
+            @Html.DisplayFor(model => model.Category.ParentCategoryId)
+        </dd>
+        <dt class="col-4">
+            Status
+        </dt>
+        <dd class="col-8">
+            @{
+                string statusName = Model.Category.IsActive switch
+                {
+                    true => "Active",
+                    false => "Inactive",
+                };
+            }
+            @statusName
+        </dd>
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div style="color: red" id="error-message">@Model.Message</div>
+        }
+        <form method="post">
+            <input type="hidden" name="id" asp-for="Category.CategoryId" />
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            <a asp-page="/CategoryManagement/Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </dl>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const errorMessage = document.getElementById("error-message");
+        if (errorMessage) {
+            const message = errorMessage.textContent.trim();
+            if (message !== "") {
+                setTimeout(function () {
+                    errorMessage.style.display = "none";
+                    window.location.href = '/CategoryManagement/Index';
+                }, 1000);
+            } else {
+                setTimeout(function () {
+                    errorMessage.style.display = "none";
+                }, 1000);
+            }
+        }
+    });
+</script>

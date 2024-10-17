@@ -9,8 +9,10 @@ namespace Repository
 {
     public interface ITagRepository
     {
-        void Add(Tag tag);
+        void AddTag(Tag tag);
         List<Tag> GetAllTag();
         Tag? GetTagById(int tagId);
+        void UpdateTag(Tag tag);
+        void DeleteTag(Tag tag);
     }
 }

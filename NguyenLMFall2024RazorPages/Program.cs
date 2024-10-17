@@ -1,9 +1,10 @@
+using NguyenLMFall2024RazorPages;
 using Repository;
 using Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// register service
+// Register services
 builder.Services.AddSingleton<ISystemAccountService, SystemAccountService>();
 builder.Services.AddSingleton<ICategoryService, CategoryService>();
 builder.Services.AddSingleton<ITagService, TagService>();
@@ -14,29 +15,26 @@ builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
 builder.Services.AddSingleton<ITagRepository, TagRepository>();
 builder.Services.AddSingleton<INewsArticleRepository, NewsArticleRepository>();
 
-// Add services to the container.
-
+// Add required services
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-
+builder.Services.AddSignalR();
 builder.Services.AddRazorPages();
-// add session
+
+// Add session
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(24);
+    options.Cookie.HttpOnly = true; // Recommended for security
+    options.Cookie.IsEssential = true; // Make sure the session cookie is set
 });
-
-builder.Services.AddRazorPages();
-
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseHsts(); // Enforce HTTPS
 }
 
 app.UseHttpsRedirection();
@@ -44,15 +42,26 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
-
-app.MapRazorPages();
-
+// Use session middleware before authorization
 app.UseSession();
 
-app.MapGet("/", (HttpContext context) =>
+app.UseAuthorization();
+
+// Map the SignalR hub endpoint
+app.UseEndpoints(endpoints =>
 {
-    context.Response.Redirect("/Authentication/Login");
+    // Map SignalR hub
+    endpoints.MapHub<NewsHub>("/NewsHub");
+
+    // Map Razor pages
+    endpoints.MapRazorPages();
+
+    // Redirect root URL to Login page
+    endpoints.MapGet("/", async context =>
+    {
+        context.Response.Redirect("/Authentication/Login");
+    });
 });
+
 
 app.Run();

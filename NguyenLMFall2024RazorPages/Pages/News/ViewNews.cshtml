@@ -1,0 +1,193 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.News.ViewNewsModel
+@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = "ViewNews";
+}
+
+<!-- Custom Styles -->
+<style>
+    /* Table Styling */
+    table.table {
+        margin-top: 20px;
+    }
+
+    table th, table td {
+        padding: 10px;
+    }
+
+    table thead {
+        background-color: #343a40;
+        color: white;
+    }
+
+    table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    table tbody tr:hover {
+        background-color: #e9ecef;
+    }
+
+    /* Button Styling */
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .detailsButton {
+        font-weight: bold;
+        padding: 8px 12px;
+        transition: all 0.3s ease;
+    }
+
+    /* Badge Styling */
+    .badge-info {
+        background-color: #17a2b8;
+        padding: 0.4em 0.75em;
+        border-radius: 0.25rem;
+    }
+
+    /* Tag styling */
+    .tag-name {
+        color: white;
+        background-color: #17a2b8;
+        padding: 0.5em 1em;
+        border-radius: 0.25rem;
+        display: inline-block;
+        margin: 2px;
+    }
+
+    /* Modal Styling */
+    .modal-header {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 10px;
+        text-align: right;
+    }
+</style>
+
+<h1 class="my-4">Welcome to NewsArticle!</h1>
+<!-- Search Box -->
+<form method="get">
+    <div class="form-group row">
+        <label for="searchQuery" class="col-sm-2 col-form-label">Search Articles:</label>
+        <div class="col-sm-8">
+            <input type="text" class="form-control" id="searchQuery" name="searchQuery" value="@Model.SearchQuery" placeholder="Enter keyword(s)">
+        </div>
+        <div class="col-sm-2">
+            <input type="submit" value="Search" class="btn btn-primary">
+        </div>
+    </div>
+</form>
+
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.NewsArticle[0].NewsTitle)</th>
+            <th>@Html.DisplayNameFor(model => model.NewsArticle[0].CreatedDate)</th>
+            <th>@Html.DisplayNameFor(model => model.NewsArticle[0].Headline)</th>
+            <th>@Html.DisplayNameFor(model => model.NewsArticle[0].NewsSource)</th>
+            
+            <th>@Html.DisplayNameFor(model => model.NewsArticle[0].NewsContent)</th>
+            @* <th>Status</th> *@
+            <th>@Html.DisplayNameFor(model => model.NewsArticle[0].ModifiedDate)</th>
+            <th>@Html.DisplayNameFor(model => model.NewsArticle[0].Category)</th>
+            <th>@Html.DisplayNameFor(model => model.NewsArticle[0].CreatedBy)</th>
+            <th>@Html.DisplayNameFor(model => model.NewsArticle[0].Tags)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.NewsArticle)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.NewsTitle)</td>
+                <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.Headline)</td>
+                <td>@Html.DisplayFor(modelItem => item.NewsSource)</td>
+                
+                <td>@Html.DisplayFor(modelItem => item.NewsContent)</td>
+                @* <td>@Html.DisplayFor(modelItem => item.NewsStatus)</td> *@
+                <td>@Html.DisplayFor(modelItem => item.ModifiedDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.Category.CategoryDesciption)</td>
+                <td>@Html.DisplayFor(modelItem => item.CreatedBy.AccountName)</td>
+                <td>
+                    @foreach (var tag in item.Tags)
+                    {
+                        <span class="badge badge-info tag-name">@tag.TagName</span>
+                    }
+                </td>
+                <td>
+                    <button class="btn btn-success detailsButton" data-id="@item.NewsArticleId">
+                        <i class="fas fa-info-circle"></i> Details
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal for Details -->
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">News Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Details content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.detailsButton', function () {
+                var newsArticleId = $(this).data('id');
+                openDetailsModal(newsArticleId);
+            });
+        });
+
+        function openDetailsModal(newsArticleId) {
+            $.ajax({
+                url: '/News/NewsDetail?id=' + newsArticleId,
+                method: 'GET',
+                success: function (data) {
+                    $('.modal-body').html(data);
+                    $('#detailsModal').modal('show');
+                },
+                error: function () {
+                    alert('Failed to load details.');
+                }
+            });
+        }
+
+        function closeModal() {
+            $('#detailsModal').modal('hide');
+            window.location.href = '/News/ViewNews';
+        }
+    </script>
+}

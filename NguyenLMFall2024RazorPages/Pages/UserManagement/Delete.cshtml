@@ -1,0 +1,67 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.UserManagement.DeleteModel
+@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <dl class="row">
+        <dt class="col-4">
+            @Html.DisplayNameFor(model => model.SystemAccount.AccountName)
+        </dt>
+        <dd class="col-8">
+            @Html.DisplayFor(model => model.SystemAccount.AccountName)
+        </dd>
+        <dt class="col-4">
+            @Html.DisplayNameFor(model => model.SystemAccount.AccountEmail)
+        </dt>
+        <dd class="col-8">
+            @Html.DisplayFor(model => model.SystemAccount.AccountEmail)
+        </dd>
+        <dt class="col-4">
+            @Html.DisplayNameFor(model => model.Role)
+        </dt>
+        <dd class="col-8">
+            @Model.Role
+        </dd>
+        <dt class="col-4">
+            @Html.DisplayNameFor(model => model.SystemAccount.AccountPassword)
+        </dt>
+        <dd class="col-8">
+            @Html.DisplayFor(model => model.SystemAccount.AccountPassword)
+        </dd>
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div style="color: red" id="error-message">@Model.Message</div>
+        }
+        <form method="post">
+            <input type="hidden" name="id" asp-for="SystemAccount.AccountId" />
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            <a asp-page="/UserManagement/Index" class="btn btn-secondary">Close</a>
+        </form>
+    </dl>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const errorMessage = document.getElementById("error-message");
+        if (errorMessage) {
+            const message = errorMessage.textContent.trim();
+            if (message !== "") {
+                setTimeout(function () {
+                    errorMessage.style.display = "none";
+                    window.location.href = '/UserManagement/Index';
+                }, 1000);
+            } else {
+                setTimeout(function () {
+                    errorMessage.style.display = "none";
+                }, 1000);
+            }
+        }
+    });
+</script>

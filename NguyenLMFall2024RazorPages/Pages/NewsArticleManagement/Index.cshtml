@@ -1,0 +1,222 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.NewsArticleManagement.IndexModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "News Article Management";
+}
+
+<!-- Custom Styles -->
+<style>
+    .tag-name {
+        color: white;
+        background-color: #17a2b8;
+        padding: 0.3em 0.8em;
+        border-radius: 0.25rem;
+        margin-right: 0.2em;
+    }
+
+    /* Styling for Status */
+    .status-badge {
+        padding: 0.5em 1em;
+        border-radius: 0.25rem;
+    }
+
+    .status-active {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status-inactive {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .status-archived {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .table thead {
+        background-color: #343a40;
+        color: white;
+    }
+
+    /* Button styling */
+    .btn-primary, .btn-warning, .btn-danger, .btn-success {
+        margin-bottom: 0.5em;
+    }
+
+        .btn-primary:hover, .btn-warning:hover, .btn-danger:hover, .btn-success:hover {
+            opacity: 0.85;
+        }
+
+    /* Modal styling */
+    .modal-header {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 10px;
+        text-align: right;
+    }
+</style>
+
+<div class="row">
+    <h1>Menu</h1>
+    <div class="col-md-2">
+        <div class="list-group">
+            <a href="/CategoryManagement/Index" class="list-group-item list-group-item-action">Category Management</a>
+            <a href="/NewsArticleManagement" class="list-group-item list-group-item-action active">News Management</a>
+            <a href="/TagManagement/Index" class="list-group-item list-group-item-action">Tags Management</a>
+            <a href="/ProfileManagement/Index" class="list-group-item list-group-item-action">Profile Management</a>
+            <a href="/NewsArticleManagement/History" class="list-group-item list-group-item-action">Your History</a>
+        </div>
+    </div>
+
+    <div class="col-md-10">
+        <h1>News Article Management</h1>
+        <!-- Search Box -->
+        <form method="get">
+            <div class="form-group row">
+                <label for="searchQuery" class="col-sm-2 col-form-label">Search Articles:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="searchQuery" name="searchQuery" value="@Model.SearchQuery" placeholder="Enter keyword(s)">
+                </div>
+                <div class="col-sm-2">
+                    <input type="submit" value="Search" class="btn btn-primary">
+                </div>
+            </div>
+        </form>
+        <p>
+            <a class="btn btn-primary createButton">Create News</a>
+        </p>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.NewsArticle[0].NewsTitle)</th>
+                    
+                    <th>@Html.DisplayNameFor(model => model.NewsArticle[0].CreatedDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.NewsArticle[0].Headline)</th>
+                    <th>@Html.DisplayNameFor(model => model.NewsArticle[0].NewsSource)</th>
+                    <th>@Html.DisplayNameFor(model => model.NewsArticle[0].NewsContent)</th>
+                    
+                    <th>Status</th>
+                    <th>@Html.DisplayNameFor(model => model.NewsArticle[0].ModifiedDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.NewsArticle[0].Category)</th>
+                    <th>@Html.DisplayNameFor(model => model.NewsArticle[0].CreatedBy)</th>
+                    <th>@Html.DisplayNameFor(model => model.NewsArticle[0].Tags)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.NewsArticle)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.NewsTitle)</td>
+
+                        <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Headline)</td>
+                        <td>@Html.DisplayFor(modelItem => item.NewsSource)</td>
+                        <td>@(item.NewsContent.Length > 100 ? @item.NewsContent.Substring(0, 200) + "..." : @item.NewsContent)</td>
+                        @* <td>@Html.DisplayFor(modelItem => item.NewsContent)</td> *@
+                        <td>
+                            @{
+                                string statusName = item.NewsStatus switch
+                                {
+                                    true => "Active",
+                                    false => "Inactive",
+                                };
+                            }
+                            @statusName
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.ModifiedDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Category.CategoryDesciption)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CreatedBy.AccountName)</td>
+                        <td>
+                            @foreach (var tag in item.Tags)
+                            {
+                                <span class="badge badge-info tag-name">@tag.TagName</span>
+                            }
+                        </td>
+                        <td class="d-flex flex-column justify-content-between">
+                            <a class="btn btn-warning updateButton" data-id="@item.NewsArticleId">Update</a>
+                            <a class="btn btn-danger deleteButton" data-id="@item.NewsArticleId">Delete</a>
+                            <button class="btn btn-success detailsButton" data-id="@item.NewsArticleId">Details</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal for showing details -->
+<div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formModalLabel">Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.createButton', function () {
+                window.location.href = '/NewsArticleManagement/Edit';
+            });
+
+            $('body').on('click', '.updateButton', function () {
+                var id = $(this).data('id');
+                window.location.href = '/NewsArticleManagement/Edit?id=' + id;
+            });
+
+            $('body').on('click', '.deleteButton', function () {
+                var id = $(this).data('id');
+                window.location.href = '/NewsArticleManagement/Delete?id=' + id;
+            });
+
+            $('body').on('click', '.detailsButton', function () {
+                var newsArticleId = $(this).data('id');
+                $('#formModalLabel').text('Detail');
+                openDetailsModal(newsArticleId);
+            });
+        });
+
+        function openDetailsModal(newsArticleId) {
+            $.ajax({
+                url: '/NewsArticleManagement/Details?id=' + newsArticleId,
+                method: 'GET',
+                success: function (data) {
+                    $('.modal-body').html(data);
+                    $('#formModal').modal('show');
+                },
+            });
+        }
+
+        function closeModal() {
+            $('#formModal').modal('hide');
+            window.location.href = '/NewsArticleManagement/Index';
+        }
+    </script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/site.js"></script>
+}

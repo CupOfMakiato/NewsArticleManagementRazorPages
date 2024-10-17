@@ -1,0 +1,183 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.CategoryManagement.IndexModel
+@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- Custom Styles -->
+<style>
+    .tag-name {
+        color: white;
+        background-color: #17a2b8;
+        padding: 0.3em 0.8em;
+        border-radius: 0.25rem;
+        margin-right: 0.2em;
+    }
+
+    /* Styling for Status */
+    .status-badge {
+        padding: 0.5em 1em;
+        border-radius: 0.25rem;
+    }
+
+    .status-active {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status-inactive {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .status-archived {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .table thead {
+        background-color: #343a40;
+        color: white;
+    }
+
+    /* Button styling */
+    .btn-primary, .btn-warning, .btn-danger, .btn-success {
+        margin-bottom: 0.5em;
+    }
+
+        .btn-primary:hover, .btn-warning:hover, .btn-danger:hover, .btn-success:hover {
+            opacity: 0.85;
+        }
+
+    /* Modal styling */
+    .modal-header {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 10px;
+        text-align: right;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-2">
+        <h1>Menu</h1>
+        <div class="list-group">
+            <a href="/CategoryManagement/Index" class="list-group-item list-group-item-action active">Category Management</a>
+            <a href="/NewsArticleManagement/Index" class="list-group-item list-group-item-action">News Management</a>
+            <a href="/TagManagement/Index" class="list-group-item list-group-item-action">Tags Management</a>
+            <a href="/ProfileManagement/Index" class="list-group-item list-group-item-action">Profile Management</a>
+            <a href="/NewsArticleManagement/History" class="list-group-item list-group-item-action">Your History</a>
+        </div>
+    </div>
+    
+    <div class="col-md-10">
+        <h1>Category Management</h1>
+        <a class="btn btn-primary createButton mb-3">Create New Category</a>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Category[0].CategoryName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Category[0].CategoryDesciption)</th>
+                    <th>@Html.DisplayNameFor(model => model.Category[0].ParentCategoryId)</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Category)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.CategoryName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CategoryDesciption)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ParentCategoryId)</td>
+                        <td>
+                            @{
+                                string statusName = item.IsActive switch
+                                {
+                                    true => "Active",
+                                    false => "Inactive",
+                                };
+                            }
+                            @statusName
+                        </td>
+                        <td class="d-flex flex-column">
+                            <a class="btn btn-warning updateButton" data-id="@item.CategoryId">Update</a>
+                            <a class="btn btn-danger deleteButton" data-id="@item.CategoryId">Delete</a>
+                            <button class="btn btn-success detailsButton" data-id="@item.CategoryId">Details</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formModalLabel">Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.createButton', function () {
+                window.location.href = '/CategoryManagement/Edit';
+            });
+
+            $('body').on('click', '.updateButton', function () {
+                var id = $(this).data('id');
+                window.location.href = '/CategoryManagement/Edit?id=' + id;
+            });
+
+            $('body').on('click', '.deleteButton', function () {
+                var id = $(this).data('id');
+                window.location.href = '/CategoryManagement/Delete?id=' + id;
+            });
+
+            $('body').on('click', '.detailsButton', function () {
+                var categoryId = $(this).data('id');
+                $('#formModalLabel').text('Detail');
+                openDetailsModal(categoryId);
+            });
+        });
+
+        function openDetailsModal(categoryId) {
+            $.ajax({
+                url: '/CategoryManagement/Details?id=' + categoryId,
+                method: 'GET',
+                success: function (data) {
+                    $('.modal-body').html(data);
+                    $('#formModal').modal('show');
+                },
+            });
+        }
+
+        function closeModal() {
+            $('#formModal').modal('hide');
+            window.location.href = '/CategoryManagement/Index';
+        }
+    </script>
+}

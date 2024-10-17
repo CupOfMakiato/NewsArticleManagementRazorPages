@@ -1,0 +1,100 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.ProfileManagement.IndexModel
+@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Menu</h1>
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="list-group">
+            <a href="/CategoryManagement/Index" class="list-group-item list-group-item-action">Category Management</a>
+            <a href="/NewsArticleManagement/Index" class="list-group-item list-group-item-action">News Management</a>
+            <a href="/TagManagement/Index" class="list-group-item list-group-item-action">Tags Management</a>
+            <a href="/ProfileManagement/Index" class="list-group-item list-group-item-action active">Profile Management</a>
+            <a href="/NewsArticleManagement/History" class="list-group-item list-group-item-action">Your History</a>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div>
+            <h4>SystemAccount</h4>
+            <dl class="row">
+                <dt class="col-4">
+                    @Html.DisplayNameFor(model => model.SystemAccount.AccountName)
+                </dt>
+                <dd class="col-8">
+                    @Html.DisplayFor(model => model.SystemAccount.AccountName)
+                </dd>
+                <dt class="col-4">
+                    @Html.DisplayNameFor(model => model.SystemAccount.AccountEmail)
+                </dt>
+                <dd class="col-8">
+                    @Html.DisplayFor(model => model.SystemAccount.AccountEmail)
+                </dd>
+                <dt class="col-4">
+                    @Html.DisplayNameFor(model => model.SystemAccount.AccountRole)
+                </dt>
+                @if (Model.SystemAccount.AccountRole == 1)
+                {
+                    <dd class="col-8">Staff</dd>
+                }
+                else
+                {
+                    <dd class="col-8">Lecturer</dd>
+                }
+                <dt class="col-4">
+                    @Html.DisplayNameFor(model => model.SystemAccount.AccountPassword)
+                </dt>
+                <dd class="col-8">
+                    @Html.DisplayFor(model => model.SystemAccount.AccountPassword)
+                </dd>
+                @if (!string.IsNullOrEmpty(Model.Message))
+                {
+                    <div style="color: red" id="error-message">@Model.Message</div>
+                }
+                <div>
+                    <a class="btn btn-warning updateButton" data-id="@Model.SystemAccount.AccountId">Update</a>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formModalLabel">Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.updateButton', function () {
+                var id = $(this).data('id');
+                window.location.href = '/ProfileManagement/Edit?id=' + id;
+            });
+        });
+
+        function closeModal() {
+            $('#formModal').modal('hide');
+            window.location.href = '/ProfileManagement/Index';
+        }
+    </script>
+}

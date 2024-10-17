@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Entity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,12 +52,39 @@ namespace DAO
             }
         }
 
-        public void Add(Tag tag)
+        public void AddTag(Tag tag)
         {
             try
             {
                 using var db = new FunewsManagementFall2024Context();
                 db.Tags.Add(tag);
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void UpdateTag(Tag tag)
+        {
+            try
+            {
+                using var db = new FunewsManagementFall2024Context();
+                db.Entry<Tag>(tag).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void DeleteTag(Tag tag)
+        {
+            try
+            {
+                using var db = new FunewsManagementFall2024Context();
+                var p1 = db.Tags.SingleOrDefault(x => x.TagId == tag.TagId);
+                db.Tags.Remove(p1);
                 db.SaveChanges();
             }
             catch (Exception ex)

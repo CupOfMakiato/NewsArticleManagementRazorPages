@@ -1,0 +1,222 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.NewsArticleManagement.HistoryModel
+@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = "History";
+}
+
+<!-- Custom Styles -->
+<style>
+    .tag-name {
+        color: white;
+        background-color: #17a2b8;
+        padding: 0.3em 0.8em;
+        border-radius: 0.25rem;
+        margin-right: 0.2em;
+    }
+
+    /* Styling for Status */
+    .status-badge {
+        padding: 0.5em 1em;
+        border-radius: 0.25rem;
+    }
+
+    .status-active {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status-inactive {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .status-archived {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .table thead {
+        background-color: #343a40;
+        color: white;
+    }
+
+    /* Button styling */
+    .btn-primary, .btn-warning, .btn-danger, .btn-success {
+        margin-bottom: 0.5em;
+    }
+
+        .btn-primary:hover, .btn-warning:hover, .btn-danger:hover, .btn-success:hover {
+            opacity: 0.85;
+        }
+
+    /* Modal styling */
+    .modal-header {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 10px;
+        text-align: right;
+    }
+</style>
+
+
+<h1>Menu</h1>
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="list-group">
+            <a href="/CategoryManagement/Index" class="list-group-item list-group-item-action">Category Management</a>
+            <a href="/NewsArticleManagement/Index" class="list-group-item list-group-item-action">News Management</a>
+            <a href="/TagManagement/Index" class="list-group-item list-group-item-action">Tags Management</a>
+            <a href="/ProfileManagement/Index" class="list-group-item list-group-item-action">Profile Management</a>
+            <a href="/NewsArticleManagement/History" class="list-group-item list-group-item-action active">Your History</a>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <h1>Your News Creation History</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NewsArticle[0].NewsTitle)
+                    </th>
+                    <th>
+                        Headline
+                    </th>
+                    <th>
+                        Source
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NewsArticle[0].CreatedDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NewsArticle[0].NewsContent)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NewsArticle[0].NewsStatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NewsArticle[0].ModifiedDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NewsArticle[0].Category)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NewsArticle[0].CreatedBy)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NewsArticle[0].Tags)
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.NewsArticle)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NewsTitle)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Headline)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NewsSource)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedDate)
+                        </td>
+                        <td>@(item.NewsContent.Length > 100 ? @item.NewsContent.Substring(0, 100) + "..." : @item.NewsContent)</td>
+                        <td>
+                            @{
+                                string statusName = item.NewsStatus switch
+                                {
+                                    true => "Active",
+                                    false => "Inactive",
+                                };
+                            }
+                            @statusName
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ModifiedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category.CategoryDesciption)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedBy.AccountName)
+                        </td>
+                        <td>
+                            @foreach (var tag in item.Tags)
+                            {
+                                <span class="badge badge-info tag-name">@tag.TagName</span>
+                            }
+                        </td>
+                        <td>
+                            <button class="btn btn-success detailsButton" data-id="@item.NewsArticleId">Details</button>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formModalLabel">Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.detailsButton', function () {
+                var newsArticleId = $(this).data('id');
+                $('#formModalLabel').text('Detail');
+                openDetailsModal(newsArticleId);
+            });
+        });
+
+        function openDetailsModal(newsArticleId) {
+            $.ajax({
+                url: '/NewsArticleManagement/Details?id=' + newsArticleId,
+                method: 'GET',
+                success: function (data) {
+                    $('.modal-body').html(data);
+                    $('#formModal').modal('show');
+                },
+            });
+        }
+
+        function closeModal() {
+            $('#formModal').modal('hide');
+            window.location.href = '/NewsArticleManagement/Index';
+        }
+    </script>
+}

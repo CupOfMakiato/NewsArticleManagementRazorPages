@@ -1,0 +1,183 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.TagManagement.IndexModel
+
+@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = "Index";
+}
+<!-- Custom Styles -->
+<style>
+    .tag-name {
+        color: white;
+        background-color: #17a2b8;
+        padding: 0.3em 0.8em;
+        border-radius: 0.25rem;
+        margin-right: 0.2em;
+    }
+
+    /* Styling for Status */
+    .status-badge {
+        padding: 0.5em 1em;
+        border-radius: 0.25rem;
+    }
+
+    .status-active {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status-inactive {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .status-archived {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .table thead {
+        background-color: #343a40;
+        color: white;
+    }
+
+    /* Button styling */
+    .btn-primary, .btn-warning, .btn-danger, .btn-success {
+        margin-bottom: 0.5em;
+    }
+
+        .btn-primary:hover, .btn-warning:hover, .btn-danger:hover, .btn-success:hover {
+            opacity: 0.85;
+        }
+
+    /* Modal styling */
+    .modal-header {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 10px;
+        text-align: right;
+    }
+</style>
+<h1>Menu</h1>
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="list-group">
+            <a href="/CategoryManagement/Index" class="list-group-item list-group-item-action">Category Management</a>
+            <a href="/NewsArticleManagement/Index" class="list-group-item list-group-item-action">News Management</a>
+            <a href="/TagManagement/Index" class="list-group-item list-group-item-action active">Tags Management</a>
+            <a href="/ProfileManagement/Index" class="list-group-item list-group-item-action">Profile Management</a>
+            <a href="/NewsArticleManagement/History" class="list-group-item list-group-item-action">Your History</a>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <h1>Tags Management</h1>
+
+        <p>
+            <a class="btn btn-primary createButton">Create Tag</a>
+        </p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tag[0].TagName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tag[0].Note)
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Tag)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TagName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Note)
+                        </td>
+                        <td class="d-flex flex-column justify-content-between">
+                            <a class="btn btn-warning updateButton" data-id="@item.TagId">Update</a>
+                            <a class="btn btn-danger deleteButton" data-id="@item.TagId">Delete</a>
+                            <button class="btn btn-success detailsButton" data-id="@item.TagId">Details</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formModalLabel">Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.createButton', function () {
+                window.location.href = '/TagManagement/Create';
+            });
+
+            $('body').on('click', '.updateButton', function () {
+                var id = $(this).data('id');
+                window.location.href = '/TagManagement/Edit?id=' + id;
+            });
+
+            $('body').on('click', '.deleteButton', function () {
+                var id = $(this).data('id');
+                window.location.href = '/TagManagement/Delete?id=' + id;
+            });
+
+            $('body').on('click', '.detailsButton', function () {
+                var newsArticleId = $(this).data('id');
+                $('#formModalLabel').text('Detail');
+                openDetailsModal(newsArticleId);
+            });
+        });
+
+        function openDetailsModal(newsArticleId) {
+            $.ajax({
+                url: '/TagManagement/Details?id=' + newsArticleId,
+                method: 'GET',
+                success: function (data) {
+                    $('.modal-body').html(data);
+                    $('#formModal').modal('show');
+                },
+            });
+        }
+
+        function closeModal() {
+            $('#formModal').modal('hide');
+            window.location.href = '/TagManagement/Index';
+        }
+    </script>
+}

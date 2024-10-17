@@ -15,9 +15,17 @@ namespace Service
         {
             _tagRepository = tagRepository;
         }
-        public void Add(Tag tag)
+        public void AddTag(Tag tag)
         {
-            _tagRepository.Add(tag);
+            _tagRepository.AddTag(tag);
+        }
+        public void UpdateTag(Tag tag)
+        {
+            _tagRepository.UpdateTag(tag);
+        }
+        public void DeleteTag(Tag tag)
+        {
+            _tagRepository.DeleteTag(tag);
         }
 
         public List<Tag> GetAllTag()

@@ -10,9 +10,17 @@ namespace Repository
 {
     public class TagRepository : ITagRepository
     {
-        public void Add(Tag tag)
+        public void AddTag(Tag tag)
         {
-            TagDAO.getInstance().Add(tag);
+            TagDAO.getInstance().AddTag(tag);
+        }
+        public void UpdateTag(Tag tag)
+        {
+            TagDAO.getInstance().UpdateTag(tag);
+        }
+        public void DeleteTag(Tag tag)
+        {
+            TagDAO.getInstance().DeleteTag(tag);
         }
 
         public Tag? GetTagById(int tagId)

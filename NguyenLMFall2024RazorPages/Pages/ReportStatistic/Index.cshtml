@@ -1,0 +1,197 @@
+﻿@page
+@model NguyenLMFall2024RazorPages.Pages.ReportStatistic.IndexModel
+@{
+    Layout = "_Layout";
+}
+
+<!-- Custom Styles -->
+<style>
+    .tag-name {
+        color: white;
+        background-color: #17a2b8;
+        padding: 0.3em 0.8em;
+        border-radius: 0.25rem;
+        margin-right: 0.2em;
+    }
+
+    /* Styling for Status */
+    .status-badge {
+        padding: 0.5em 1em;
+        border-radius: 0.25rem;
+    }
+
+    .status-active {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status-inactive {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .status-archived {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .table thead {
+        background-color: #343a40;
+        color: white;
+    }
+
+    /* Button styling */
+    .btn-primary, .btn-warning, .btn-danger, .btn-success {
+        margin-bottom: 0.5em;
+    }
+
+        .btn-primary:hover, .btn-warning:hover, .btn-danger:hover, .btn-success:hover {
+            opacity: 0.85;
+        }
+
+    /* Modal styling */
+    .modal-header {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 10px;
+        text-align: right;
+    }
+</style>
+
+<div class="row">
+    <h1>Menu</h1>
+    <div class="col-md-2">
+        <div class="list-group">
+            <a href="/UserManagement/Index" class="list-group-item list-group-item-action">Account Management</a>
+            <a href="/ReportStatistic/Index" class="list-group-item list-group-item-action active">Statistic Report</a>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <h2>News Report</h2>
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate" class="control-label"></label>
+                <input asp-for="EndDate" class="form-control" type="date" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Generate Report</button>
+        </form>
+
+        @if (Model.NewsArticles != null && Model.NewsArticles.Any())
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Headline</th>
+                        <th>Source</th>
+                        <th>Created Date</th>
+                        <th>Content</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>ModifiedDate</th>
+                        <th>CreatedBy</th>
+                        <th>Tags</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var news in Model.NewsArticles)
+                    {
+                        <tr>
+                            <td>@news.NewsTitle</td>
+                            <td>@news.Headline</td>
+                            <td>@news.NewsSource</td>
+                            <td>@news.CreatedDate</td>
+                            <td>@(news.NewsContent.Length > 100 ? @news.NewsContent.Substring(0, 100) + "..." : @news.NewsContent)</td>
+                            <td>@news.Category?.CategoryName</td>
+                            <td>
+                                @{
+                                    string statusName = news.NewsStatus switch
+                                    {
+                                        true => "Active",
+                                        false => "Inactive",
+                                    };
+                                }
+                                @statusName
+                            </td>
+                            <td>@news.ModifiedDate</td>
+                            <td>@news.CreatedBy.AccountName</td>
+                            <td>
+                                @foreach (var tag in news.Tags)
+                                {
+                                    <span class="badge badge-info tag-name">@tag.TagName</span>
+                                }
+                            </td>
+                            <td class="d-flex flex-column justify-content-between">
+                                <button class="btn btn-success detailsButton" data-id="@news.NewsArticleId">Details</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No news articles found for the selected period.</p>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formModalLabel">Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.detailsButton', function () {
+                var newsArticleId = $(this).data('id');
+                $('#formModalLabel').text('Detail');
+                openDetailsModal(newsArticleId);
+            });
+        });
+
+        function openDetailsModal(newsArticleId) {
+            $.ajax({
+                url: '/ReportStatistic/Details?id=' + newsArticleId,
+                method: 'GET',
+                success: function (data) {
+                    $('.modal-body').html(data);
+                    $('#formModal').modal('show');
+                },
+            });
+        }
+
+        function closeModal() {
+            $('#formModal').modal('hide');
+            window.location.href = '/ReportStatistic/NewsReportModel';
+        }
+    </script>
+}
